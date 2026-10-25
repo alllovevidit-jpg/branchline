@@ -1,16 +1,29 @@
-# React + Vite
+# Branchline — Interactive Git Internals & DAG Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Branchline** is an interactive developer tool built from scratch in React and JavaScript that visualizes how Git works under the hood as a **Directed Acyclic Graph (DAG)**.
 
-Currently, two official plugins are available:
+Instead of treating Git commands as black-box terminal magic, Branchline exposes commit objects, branch pointers, `HEAD` states, Lowest Common Ancestor (LCA) graph traversal, 3-way merge conflict resolution, and rebase commit cloning in real time.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Key Engineering Highlights
 
-## React Compiler
+- **In-Memory Git DAG Engine (`src/engine/gitEngine.js`):** Pure JavaScript implementation of content-addressable commit nodes, parent pointers, attached/detached `HEAD` refs, and working-tree snapshots.
+- **Lowest Common Ancestor (LCA) via BFS:** Traverses ancestor paths across divergent branches to automatically identify the exact `Merge Base` commit before executing fast-forward or 3-way merges.
+- **Interactive 3-Way Merge Conflict Resolver:** Compares file snapshots across `Base (LCA)`, `Ours (Current)`, and `Theirs (Incoming)` to trigger and resolve real merge conflicts in the UI.
+- **Rebase & Ghost Node Visualization:** Visually demonstrates why `git rebase` rewrites history by cloning commits onto a new base while preserving the original orphaned commits as faded ghost nodes.
+- **Topological Swimlane Layout (`src/engine/dagLayout.js`):** Computes deterministic `(x, y)` SVG coordinates and cubic Bezier curves with zero overlapping nodes.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Supported Commands
 
-## Expanding the ESLint configuration
+Use the **1-Click Quick Operations Deck** or type directly into the integrated **git-sh interactive shell**:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `git commit -m "feat: add caching layer"`
+- `git checkout -b feat/payment`
+- `git checkout main`
+- `git merge feat/payment`
+- `git rebase main`
+- `git reset --hard HEAD~1`
+
+## Tech Stack
+- **Frontend:** React, Vite, Lucide Icons
+- **Graph Rendering:** Custom SVG Cubic Bezier Engine + Topological Depth Sort
+- **Styling:** Custom Obsidian Dark CSS Grid Design System (`Inter` + `JetBrains Mono`)
